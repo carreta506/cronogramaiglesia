@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planificación Culto Alajuela Central II Turno</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .info label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+
+    .info input {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 25px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background: #eee;
+    }
+
+    td.fase {
+      text-align: left;
+      font-weight: bold;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    .total {
+      font-size: 18px;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .ok {
+      color: green;
+    }
+
+    .alert {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- CONTENIDO PARA PDF -->
+<div id="contenidoPDF">
+
+  <h1>Planificación Culto Alajuela Central II Turno</h1>
+
+  <div class="info">
+    <label>Fecha</label>
+    <input type="date">
+
+    <label>Anciano</label>
+    <input type="text">
+
+    <label>Audiovisuales</label>
+    <input type="text">
+
+    <label>Música</label>
+    <input type="text">
+  </div>
+
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th>Fase</th>
+        <th>Responsable</th>
+        <th>Tiempo estimado (min)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="fase">Servicio de canto</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+      <tr><td class="fase">Escuela Sabática</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+      <tr><td class="fase">Repaso de la lección</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+      <tr><td class="fase">Anuncios</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+      <tr><td class="fase">Oración de rodillas</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+      <tr><td class="fase">Doxología</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+      <tr><td class="fase">Lectura bíblica</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+
+      <!-- NUEVAS FASES -->
+      <tr><td class="fase">Oración inicial</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+      <tr><td class="fase">Himno inicial</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+
+      <tr><td class="fase">Diezmos y ofrendas</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+      <tr><td class="fase">Rincón infantil</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+      <tr><td class="fase">Sermón</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+      <tr><td class="fase">Himno final</td><td><input></td><td><input type="number" min="0" oninput="calcular()"></td></tr>
+    </tbody>
+  </table>
+
+  <div class="total" id="totalTiempo">Total: 0 min</div>
+  <div class="total" id="estado"></div>
+
+</div>
+<!-- FIN PDF -->
+
+<button type="button" onclick="generarPDF()">Exportar a PDF</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+const LIMITE = 165;
+
+function calcular() {
+  let total = 0;
+  document.querySelectorAll('#tabla input[type=number]').forEach(i => {
+    total += Number(i.value) || 0;
+  });
+
+  document.getElementById('totalTiempo').innerText = `Total: ${total} min`;
+
+  const estado = document.getElementById('estado');
+  if (total > LIMITE) {
+    estado.innerText = '⚠ Excede el tiempo máximo permitido (2h 45m)';
+    estado.className = 'total alert';
+  } else {
+    estado.innerText = '✔ Dentro del tiempo permitido';
+    estado.className = 'total ok';
+  }
+}
+
+function generarPDF() {
+  const elemento = document.getElementById('contenidoPDF');
+
+  html2pdf().set({
+    margin: 10,
+    filename: 'Planificacion_Culto_Alajuela_Central_II_Turno.pdf',
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }).from(elemento).save();
+}
+</script>
+
+</body>
+</html>
